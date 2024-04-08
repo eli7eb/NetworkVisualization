@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import os
 from collections import Counter
 from ast import literal_eval
+from datetime import datetime
 
 # upload the data file
 #create the graph data
@@ -120,12 +121,19 @@ def main_vis():
         "node_color": "#A0CBE2",
         "edge_color": colors,
         "width": 4,
+        "node_size": 30,
         "edge_cmap": plt.cm.Blues,
         "labels":label_dict,
         "with_labels": True,
     }
     nx.draw(G2, pos, **options)
-    plt.show()
+    now = datetime.now()
+    output_graph_file = "graph_" + now.strftime("%m_%d_%Y_%H_%M_%S") +".png"
+    cwd = os.path.dirname(__file__)  # get current location of script
+    print(f'cwd: {cwd}')
+    output_dir_name = "./output/"
+    os.path.join(cwd, 'output')
+    plt.savefig(output_dir_name+output_graph_file, dpi=1000)
     #for x in graph_data_list:
     #    print("AUTHOR " + x.author + " LABEL " + x.label + " SCORE " + x.score)
     #    G2.add_edge(video_id, str(x.author))
