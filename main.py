@@ -6,6 +6,8 @@ import csv
 import networkx as nx
 import matplotlib.pyplot as plt
 import os
+from collections import Counter
+from ast import literal_eval
 
 # upload the data file
 #create the graph data
@@ -27,7 +29,45 @@ class GraphData:
     self.score = score
     self.label = label
 
+# pass the label dict - assign color to label
+def prepare_colors(emotions_list):
+    graph_colors = []
+    dict_langfam2color = {
+        "surprise": "(151, 0, 0)",  # dark red
+        "joy": "(0, 102, 102)",  # dark turquoise
+        "anger": "(96, 96, 96)",  # grey
+        "disgust": "(153, 76, 0)",  # dark yellow
+        "fear": "(153, 0, 76)",  # dark pink
+        "sadness": "(153, 153, 0)",  # dark yellow
+        "neutral": "(0, 102, 0)"  # dark green
+        #"Semetic": "(0, 102, 0)",  # dark green
+        #"Slavic": "(0, 153, 153)",  # dark blue/green
+        #"SubSaharanAfrica": "(0, 0, 153)",  # dark blue
+        #"Turkic": "(76, 0, 153)"  # dark purple
+    }
+    dict_langfam2color = {k: tuple(map(lambda x: x / 255, literal_eval(v)))
+                          for k, v in dict_langfam2color.items()
+                          }
+    counts = str(len(emotions_list))
+    for c in emotions_list:
+        graph_colors.append(dict_langfam2color[c.label])
+    #graph_colors = [dict_langfam2color[fam] for fam in counts.keys()]
+
+    return graph_colors
+
 def main_vis():
+    dict_langfam2color = {
+        "surprise": "(151, 0, 0)",  # dark red
+        "joy": "(0, 102, 102)",  # dark turquoise
+        "anger": "(96, 96, 96)",  # grey
+        "disgust": "(153, 76, 0)",  # dark yellow
+        "fear": "(153, 0, 76)",  # dark pink
+        "sadness": "(153, 153, 0)",  # dark yellow
+        "neutral": "(0, 102, 0)"  # dark green
+        # "Slavic": "(0, 153, 153)",  # dark blue/green
+        # "SubSaharanAfrica": "(0, 0, 153)",  # dark blue
+        # "Turkic": "(76, 0, 153)"  # dark purple
+    }
     # open data file
     cwd = os.path.dirname(__file__)  # get current location of script
     print(f'cwd: {cwd}')
@@ -42,7 +82,8 @@ def main_vis():
         # Create reader object by passing the file
         # object to DictReader method
         graph_data_list = []
-        labeldict = {}
+        label_dict = {}
+
         reader_obj = csv.DictReader(file_obj)
         next(reader_obj)
         # Iterate over each row in the csv file
@@ -51,7 +92,7 @@ def main_vis():
 
             # print(row)
             a = row['author']
-            labeldict[a] = a
+            label_dict[a] = a
             print ('author: '+a)
             s = row['score']
             print('score: ' + s)
@@ -59,7 +100,6 @@ def main_vis():
             print('pred: ' + p)
             l = row['label']
             print('label: ' + l)
-
             dg = GraphData(a, p, s, l)
             graph_data_list.append(dg)
 
@@ -67,18 +107,21 @@ def main_vis():
     print("graph_data_list size " + str(len(graph_data_list)))
     # create empty direction graph
     G2 = nx.star_graph(len(graph_data_list))
+    # prepare colors - send dict of labels get dict of colors
+    colors = prepare_colors(graph_data_list)
+    #colors = range(len(graph_data_list))
     for x in graph_data_list:
         print("AUTHOR " + x.author + " LABEL " + x.label + " SCORE " + x.score)
         G2.add_edge(video_id, str(x.author))
     # populate the graph
     pos = nx.spring_layout(G2, seed=63)  # Seed layout for reproducibility
-    colors = range(len(graph_data_list))
+
     options = {
         "node_color": "#A0CBE2",
         "edge_color": colors,
         "width": 4,
         "edge_cmap": plt.cm.Blues,
-        "labels":labeldict,
+        "labels":label_dict,
         "with_labels": True,
     }
     nx.draw(G2, pos, **options)
@@ -88,12 +131,12 @@ def main_vis():
     #    G2.add_edge(video_id, str(x.author))
 
 
-def print_hi(name):
+def start_star_graph(name):
     # Use a breakpoint in the code line below to debug your script.
     main_vis()
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    print_hi('PyCharm')
+    start_star_graph('PyCharm')
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
