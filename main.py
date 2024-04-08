@@ -113,15 +113,15 @@ def main_vis():
     #colors = range(len(graph_data_list))
     for x in graph_data_list:
         print("AUTHOR " + x.author + " LABEL " + x.label + " SCORE " + x.score)
-        G2.add_edge(video_id, str(x.author))
+        G2.add_edge(video_id, str(x.author), length=50)
     # populate the graph
-    pos = nx.spring_layout(G2, seed=63)  # Seed layout for reproducibility
+    pos = nx.spring_layout(G2,k=40,seed=63)  # , seed=63 Seed layout for reproducibility
 
     options = {
         "node_color": "#A0CBE2",
         "edge_color": colors,
         "width": 4,
-        "node_size": 30,
+        "node_size": 300, # node size
         "edge_cmap": plt.cm.Blues,
         "labels":label_dict,
         "with_labels": True,
