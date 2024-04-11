@@ -20,7 +20,8 @@ dir_name = "./data/"
 filename_prefix = "FILENAME_EMOTIONS_"
 filename_postfix = "_OUT_ENC.csv"
 #video_id = "SMALL_03_10_2024"
-video_id = "TEST_2024"
+video_id = "kEZjV5IwUA0"
+#video_id = "TEST_2024"
 # create a class for the data
 
 class GraphData:
@@ -73,6 +74,7 @@ def prepare_data():
         label_dict = {}
 
         reader_obj = csv.DictReader(file_obj)
+        # skip the title row
         next(reader_obj)
         # Iterate over each row in the csv file
         # using reader object
@@ -93,6 +95,15 @@ def prepare_data():
             dg = GraphData(a, p, s, l)
             graph_data_list.append(dg)
     return (graph_data_list,label_dict)
+
+def save_2_output_file():
+    now = datetime.now()
+    output_graph_file = "graph_" + now.strftime("%m_%d_%Y_%H_%M_%S") + ".png"
+    cwd = os.path.dirname(__file__)  # get current location of script
+    print(f'cwd: {cwd}')
+    output_dir_name = "./output/"
+    os.path.join(cwd, 'output')
+    plt.savefig(output_dir_name + output_graph_file, dpi=1000)
 
 def main_vis():
 
@@ -121,7 +132,10 @@ def main_vis():
     nx.draw_networkx_nodes(G2, pos, nodelist=[ego], **options)
     nx.draw_networkx_edges(G2, pos, width=8, **options_edges)
     plt.show()
-    # prepare colors - send dict of labels get dict of colors
+
+    save_2_output_file()
+
+    #prepare colors - send dict of labels get dict of colors
     # colors = prepare_colors(graph_data_list)
     # #colors = range(len(graph_data_list))
     # for x in graph_data_list:
