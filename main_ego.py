@@ -101,45 +101,64 @@ def main_vis():
     # create the graph
     print("graph_data_list size " + str(len(graph_data_list)))
     # create empty direction graph
-    G2 = nx.star_graph(len(graph_data_list))
-    # prepare colors - send dict of labels get dict of colors
-    colors = prepare_colors(graph_data_list)
-    #colors = range(len(graph_data_list))
+    ego_graph_data = []
+    ego_graph_data_index = 1
+    first = True
     for x in graph_data_list:
-        print("AUTHOR " + x.author + " LABEL " + x.label + " SCORE " + x.score)
-        G2.add_edge(video_id, str(x.author), length=50)
-    # populate the graph
-    pos = nx.spring_layout(G2,k=1)  # ,k=40,seed=63 Seed layout for reproducibility
+        if bool(first) == False:
+            tupple_element = (graph_data_list[0].author, x.author)
+            ego_graph_data.append(tupple_element)
+        first = False
+    G2 = nx.Graph()
+    G2.add_edges_from(ego_graph_data)
+    ego = graph_data_list[0].author
+    pos = nx.spring_layout(G2)
+    nx.draw(G2, pos, node_color="lavender",
+            node_size=800, with_labels=True)
+    colors = prepare_colors(graph_data_list) #  range(len(graph_data_list))
+    options = {"node_size": 1200, "node_color": "r"}
+    options_edges = {"edge_color": colors, "edge_cmap": plt.cm.Blues}
+    nx.draw_networkx_nodes(G2, pos, nodelist=[ego], **options)
+    nx.draw_networkx_edges(G2, pos, width=8, **options_edges)
+    plt.show()
+    # prepare colors - send dict of labels get dict of colors
+    # colors = prepare_colors(graph_data_list)
+    # #colors = range(len(graph_data_list))
+    # for x in graph_data_list:
+    #     print("AUTHOR " + x.author + " LABEL " + x.label + " SCORE " + x.score)
+    #     G2.add_edge(video_id, str(x.author), length=50)
+    # # populate the graph
+    # pos = nx.spring_layout(G2,k=1)  # ,k=40,seed=63 Seed layout for reproducibility
+    #
+    # options = {
+    #     "node_color": "#A0CBE2",
+    #     "edge_color": colors,
+    #     "width": 4,
+    #     "node_size": 300, # node size
+    #     "edge_cmap": plt.cm.Blues,
+    #     "labels":label_dict,
+    #     "with_labels": True,
+    # }
+    # nx.draw(G2, pos, **options)
+    # now = datetime.now()
+    # output_graph_file = "graph_" + now.strftime("%m_%d_%Y_%H_%M_%S") +".png"
+    # cwd = os.path.dirname(__file__)  # get current location of script
+    # print(f'cwd: {cwd}')
+    # output_dir_name = "./output/"
+    # os.path.join(cwd, 'output')
+    # plt.savefig(output_dir_name+output_graph_file, dpi=1000)
+    # print ('done '+output_graph_file)
+    # #for x in graph_data_list:
+    # #    print("AUTHOR " + x.author + " LABEL " + x.label + " SCORE " + x.score)
+    # #    G2.add_edge(video_id, str(x.author))
 
-    options = {
-        "node_color": "#A0CBE2",
-        "edge_color": colors,
-        "width": 4,
-        "node_size": 300, # node size
-        "edge_cmap": plt.cm.Blues,
-        "labels":label_dict,
-        "with_labels": True,
-    }
-    nx.draw(G2, pos, **options)
-    now = datetime.now()
-    output_graph_file = "graph_" + now.strftime("%m_%d_%Y_%H_%M_%S") +".png"
-    cwd = os.path.dirname(__file__)  # get current location of script
-    print(f'cwd: {cwd}')
-    output_dir_name = "./output/"
-    os.path.join(cwd, 'output')
-    plt.savefig(output_dir_name+output_graph_file, dpi=1000)
-    print ('done '+output_graph_file)
-    #for x in graph_data_list:
-    #    print("AUTHOR " + x.author + " LABEL " + x.label + " SCORE " + x.score)
-    #    G2.add_edge(video_id, str(x.author))
 
-
-def start_star_graph(name):
+def start_ego_graph(name):
     # Use a breakpoint in the code line below to debug your script.
     main_vis()
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    start_star_graph('PyCharm')
+    start_ego_graph('PyCharm')
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
