@@ -56,7 +56,6 @@ def prepare_colors(emotions_list):
 def prepare_author_name(author_name):
     author_name_stripped = author_name.lstrip('@')
     author_name_no_numbers = re.sub(r'\d+', '', author_name_stripped)
-
     return author_name_no_numbers
 
 def prepare_data():
@@ -128,12 +127,13 @@ def main_vis():
     ego = graph_data_list[0].author
     pos = nx.spring_layout(G2)
     nx.draw(G2, pos, node_color="lavender",
-            node_size=800, with_labels=True)
+            node_size=800, font_size=10, with_labels=True)
     colors = prepare_colors(graph_data_list) #  range(len(graph_data_list))
-    options = {"node_size": 1200, "node_color": "r"}
+    center_node_color = (242, 184, 75)
+    options = {"node_size": 1200, "node_color": '#F2B84B'}
     options_edges = {"edge_color": colors, "edge_cmap": plt.cm.Blues}
     nx.draw_networkx_nodes(G2, pos, nodelist=[ego], **options)
-    nx.draw_networkx_edges(G2, pos, width=4, **options_edges)
+    nx.draw_networkx_edges(G2, pos, width=2, **options_edges)
     plt.show()
 
     save_2_output_file()
