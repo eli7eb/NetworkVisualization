@@ -1,3 +1,8 @@
+# get author image from url
+# read csv file
+# for each author get the url and display it
+# start at 1
+
 # This is a sample Python script.
 
 # Press Shift+F10 to execute it or replace it with your code.
@@ -6,7 +11,8 @@ import csv
 import networkx as nx
 import matplotlib.pyplot as plt
 import os
-import re
+from urllib.request import urlopen
+from PIL import Image
 from ast import literal_eval
 from datetime import datetime
 
@@ -25,8 +31,9 @@ video_id = "kEZjV5IwUA0"
 # create a class for the data
 
 class GraphData:
-  def __init__(self,author, pred, score, label):
+  def __init__(self,author, author_image, pred, score, label):
     self.author = author
+    self.author_image = author_image
     self.pred = pred
     self.score = score
     self.label = label
@@ -35,13 +42,17 @@ class GraphData:
 def prepare_colors(emotions_list):
     graph_colors = []
     dict_langfam2color = {
-        "surprise": "(117, 191, 49)",  # green
-        "joy": "(218, 253, 186)",  # yellow green
-        "anger": "(229, 65, 94)",  # red pink
-        "disgust": "(160, 0, 124)",  # purple
-        "fear": "(100, 166, 119)",  # green olive
-        "sadness": "(105, 147, 214)",  # blue
-        "neutral": "(209, 206, 214)"  # light grey
+        "surprise": "(151, 0, 0)",  # dark red
+        "joy": "(0, 102, 102)",  # dark turquoise
+        "anger": "(96, 96, 96)",  # grey
+        "disgust": "(153, 76, 0)",  # dark yellow
+        "fear": "(153, 0, 76)",  # dark pink
+        "sadness": "(153, 153, 0)",  # dark yellow
+        "neutral": "(0, 102, 0)"  # dark green
+        #"Semetic": "(0, 102, 0)",  # dark green
+        #"Slavic": "(0, 153, 153)",  # dark blue/green
+        #"SubSaharanAfrica": "(0, 0, 153)",  # dark blue
+        #"Turkic": "(76, 0, 153)"  # dark purple
     }
     dict_langfam2color = {k: tuple(map(lambda x: x / 255, literal_eval(v)))
                           for k, v in dict_langfam2color.items()
@@ -52,14 +63,8 @@ def prepare_colors(emotions_list):
     #graph_colors = [dict_langfam2color[fam] for fam in counts.keys()]
 
     return graph_colors
-# remove author_name @ header and numbers trailers
-def prepare_author_name(author_name):
-    author_name_stripped = author_name.lstrip('@')
-    author_name_no_numbers = re.sub(r'\d+', '', author_name_stripped)
 
-    return author_name_no_numbers
-
-def prepare_data():
+def prepare_url_data():
     cwd = os.path.dirname(__file__)  # get current location of script
     print(f'cwd: {cwd}')
     os.path.join(cwd, 'data')
@@ -85,9 +90,10 @@ def prepare_data():
                 continue
 
             # print(row)
-            a = prepare_author_name(row['author'])
-            #left_chars_trimmed = text.lstrip('xy')
+            a = row['author']
             label_dict[a] = a
+            i = row['author_image']
+            label_dict[i] = i
             print('author: ' + a)
             s = row['score']
             print('score: ' + s)
@@ -95,7 +101,7 @@ def prepare_data():
             print('pred: ' + p)
             l = row['label']
             print('label: ' + l)
-            dg = GraphData(a, p, s, l)
+            dg = GraphData(a, i, p, s, l)
             graph_data_list.append(dg)
     return (graph_data_list,label_dict)
 
@@ -108,23 +114,35 @@ def save_2_output_file():
     os.path.join(cwd, 'output')
     plt.savefig(output_dir_name + output_graph_file, dpi=1000)
 
-def main_vis():
+def display_author_image(graph_data_list):
+    # get image for url
+    url = graph_data_list[0].author_image
+    img = Image.open(urlopen(url))
+    img.show()
+
+
+def main_author_image():
 
     # prepare data
-    graph_data_list, label_dict = prepare_data()
+    graph_data_list, label_dict = prepare_url_data()
+    #display_author_image(graph_data_list)
     # create the graph
     print("graph_data_list size " + str(len(graph_data_list)))
     # create empty direction graph
     ego_graph_data = []
+    ego_graph_img_data = []
     ego_graph_data_index = 1
     first = True
     for x in graph_data_list:
         if bool(first) == False:
             tupple_element = (graph_data_list[0].author, x.author)
             ego_graph_data.append(tupple_element)
+            tupple_img_element = (graph_data_list[0].author_image, x.author_image)
+            ego_graph_img_data.append(tupple_img_element)
         first = False
     G2 = nx.Graph()
     G2.add_edges_from(ego_graph_data)
+    G2.add_nodes_from(ego_graph_img_data)
     ego = graph_data_list[0].author
     pos = nx.spring_layout(G2)
     nx.draw(G2, pos, node_color="lavender",
@@ -133,7 +151,7 @@ def main_vis():
     options = {"node_size": 1200, "node_color": "r"}
     options_edges = {"edge_color": colors, "edge_cmap": plt.cm.Blues}
     nx.draw_networkx_nodes(G2, pos, nodelist=[ego], **options)
-    nx.draw_networkx_edges(G2, pos, width=4, **options_edges)
+    nx.draw_networkx_edges(G2, pos, width=8, **options_edges)
     plt.show()
 
     save_2_output_file()
@@ -170,12 +188,12 @@ def main_vis():
     # #    G2.add_edge(video_id, str(x.author))
 
 
-def start_ego_graph(name):
+def start_author_image(name):
     # Use a breakpoint in the code line below to debug your script.
-    main_vis()
+    main_author_image()
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    start_ego_graph('PyCharm')
+    start_author_image('PyCharm')
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
