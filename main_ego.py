@@ -34,6 +34,8 @@ class GraphData:
 # pass the label dict - assign color to label
 def prepare_colors(emotions_list):
     graph_colors = []
+
+    nodes_colors = []
     dict_langfam2color = {
         "surprise": "(117, 191, 49)",  # green
         "joy": "(218, 253, 186)",  # yellow green
@@ -49,9 +51,11 @@ def prepare_colors(emotions_list):
     counts = str(len(emotions_list))
     for c in emotions_list:
         graph_colors.append(dict_langfam2color[c.label])
+        nodes_colors.append(dict_langfam2color[c.label])
     #graph_colors = [dict_langfam2color[fam] for fam in counts.keys()]
+    nodes_colors.pop(0)
+    return graph_colors, nodes_colors
 
-    return graph_colors
 # remove author_name @ header and numbers trailers
 def prepare_author_name(author_name):
     author_name_stripped = author_name.lstrip('@')
@@ -128,9 +132,9 @@ def main_vis():
     pos = nx.spring_layout(G2)
     nx.draw(G2, pos, node_color="lavender",
             node_size=800, font_size=10, with_labels=True)
-    colors = prepare_colors(graph_data_list) #  range(len(graph_data_list))
-    center_node_color = (242, 184, 75)
-    options = {"node_size": 1200, "node_color": '#F2B84B'}
+    colors, nodes_colors = prepare_colors(graph_data_list) #  range(len(graph_data_list))
+    center_node_color = (242, 184, 75) # , "node_color": '#F2B84B'
+    options = {"node_size": 1200, "node_color": nodes_colors}
     options_edges = {"edge_color": colors, "edge_cmap": plt.cm.Blues}
     nx.draw_networkx_nodes(G2, pos, nodelist=[ego], **options)
     nx.draw_networkx_edges(G2, pos, width=2, **options_edges)
