@@ -7,9 +7,11 @@ import networkx as nx
 import matplotlib.pyplot as plt
 import os
 import re
+
 from ast import literal_eval
 from datetime import datetime
-from random import randrange
+from matplotlib.lines import Line2D
+
 # upload the data file
 #create the graph data
 # call show data as graph
@@ -33,13 +35,10 @@ class GraphData:
     self.score = score
     self.label = label
 
-def get_color_for_name(emotions_list,name):
-    color_list = ["green","yellow","red","purple","pink","blue","orange"]
+def get_emotion_for_name(emotions_list,name):
     for e in emotions_list:
         if e.author == name:
             return e.label
-    #i = randrange(len(color_list))
-    #return color_list[i]
     return "neutral"
 
 # pass the label dict - assign color to label
@@ -63,7 +62,7 @@ def prepare_colors(g2, emotions_list):
     for c in emotions_list:
         graph_colors.append(dict_langfam2color[c.label])
     for c in list(g2.nodes()):
-        emotion = get_color_for_name(emotions_list, c)
+        emotion = get_emotion_for_name(emotions_list, c)
         nodes_colors.append(dict_langfam2color[emotion])
     #graph_colors = [dict_langfam2color[fam] for fam in counts.keys()]
 
@@ -152,10 +151,41 @@ def main_vis():
     center_node_color = (242, 184, 75) # , "node_color": '#F2B84B'
     #options = {"node_size": 1200, "node_color": node_colors}
     options_edges = {"edge_color": colors, "edge_cmap": plt.cm.Blues}
+    # fig, axe = plt.subplots(figsize=(12, 7))
+    #
+    # axe.set_title('Title for NetworkX', loc='center')
+    # axe.legend()
+
+
+
     nx.draw(G2, pos, node_color=node_colors,
             node_size=800, font_size=10, with_labels=True)
     nx.draw_networkx_nodes(G2, pos, nodelist=[ego])
     nx.draw_networkx_edges(G2, pos, width=2, **options_edges)
+
+    # "surprise": "(117, 191, 49)",  # green
+    # "joy": "(218, 253, 186)",  # yellow green
+    # "anger": "(229, 65, 94)",  # red pink
+    # "disgust": "(160, 0, 124)",  # purple
+    # "fear": "(100, 166, 119)",  # green olive
+    # "sadness": "(105, 147, 214)",  # blue
+    # "neutral": "(209, 206, 214)"  # light grey
+    legend_elements = [Line2D([0], [0], marker='o', color='#75BF31', label='surprise', lw=0,
+                              markerfacecolor='#75BF31', markersize=10),
+                       Line2D([0], [0], marker='o', color='#DAFDBA', label='joy', lw=0,
+                              markerfacecolor='#DAFDBA', markersize=10),
+                       Line2D([0], [0], marker='o', color='#E5415E', label='anger', lw=0,
+                              markerfacecolor='#E5415E', markersize=10),
+                       Line2D([0], [0], marker='o', color='#A0007C', label='disgust', lw=0,
+                              markerfacecolor='#A0007C', markersize=10),
+                       Line2D([0], [0], marker='o', color='#64A677', label='fear', lw=0,
+                              markerfacecolor='#64A677', markersize=10),
+                       Line2D([0], [0], marker='o', color='#6993D6', label='sadness', lw=0,
+                              markerfacecolor='#6993D6', markersize=10),
+                       Line2D([0], [0], marker='o', color='#D1CED6', label='neutral', lw=0,
+                              markerfacecolor='#D1CED6', markersize=10)]
+    ax = plt.gca()
+    ax.legend(handles=legend_elements, loc='upper right')
     plt.show()
 
     #save_2_output_file()
