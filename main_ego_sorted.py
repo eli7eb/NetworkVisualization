@@ -1,7 +1,4 @@
-# This is a sample Python script.
-
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# the nodes are added one by one to have different colors
 import csv
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -9,7 +6,7 @@ import os
 import re
 from ast import literal_eval
 from datetime import datetime
-from random import randrange
+
 # upload the data file
 #create the graph data
 # call show data as graph
@@ -33,17 +30,8 @@ class GraphData:
     self.score = score
     self.label = label
 
-def get_color_for_name(emotions_list,name):
-    color_list = ["green","yellow","red","purple","pink","blue","orange"]
-    for e in emotions_list:
-        if e.author == name:
-            return e.label
-    #i = randrange(len(color_list))
-    #return color_list[i]
-    return "neutral"
-
 # pass the label dict - assign color to label
-def prepare_colors(g2, emotions_list):
+def prepare_colors(emotions_list):
     graph_colors = []
 
     nodes_colors = []
@@ -62,12 +50,9 @@ def prepare_colors(g2, emotions_list):
     counts = str(len(emotions_list))
     for c in emotions_list:
         graph_colors.append(dict_langfam2color[c.label])
-    for c in list(g2.nodes()):
-        emotion = get_color_for_name(emotions_list, c)
-        nodes_colors.append(dict_langfam2color[emotion])
+        nodes_colors.append(dict_langfam2color[c.label])
     #graph_colors = [dict_langfam2color[fam] for fam in counts.keys()]
-
-    # nodes_colors = [G2.nodes[node][ATTRIBUTE_NAME] for node in list(G2.nodes())]
+    nodes_colors.append(dict_langfam2color["neutral"])
     return graph_colors, nodes_colors
 
 # remove author_name @ header and numbers trailers
@@ -133,7 +118,6 @@ def main_vis():
     print("graph_data_list size " + str(len(graph_data_list)))
     # create empty direction graph
     ego_graph_data = []
-    nodes_data_colors = []
     ego_graph_data_index = 1
     first = True
     for x in graph_data_list:
@@ -143,22 +127,19 @@ def main_vis():
         first = False
     G2 = nx.Graph()
     G2.add_edges_from(ego_graph_data)
-
     ego = graph_data_list[0].author
     pos = nx.spring_layout(G2)
-
-    colors, node_colors = prepare_colors(G2, graph_data_list) #  range(len(graph_data_list))
-
-    center_node_color = (242, 184, 75) # , "node_color": '#F2B84B'
-    #options = {"node_size": 1200, "node_color": node_colors}
-    options_edges = {"edge_color": colors, "edge_cmap": plt.cm.Blues}
-    nx.draw(G2, pos, node_color=node_colors,
+    nx.draw(G2, pos, node_color="lavender",
             node_size=800, font_size=10, with_labels=True)
-    nx.draw_networkx_nodes(G2, pos, nodelist=[ego])
+    colors, nodes_colors = prepare_colors(graph_data_list) #  range(len(graph_data_list))
+    center_node_color = (242, 184, 75) # , "node_color": '#F2B84B'
+    options = {"node_size": 1200, "node_color": '#F2B84B'}
+    options_edges = {"edge_color": colors, "edge_cmap": plt.cm.Blues}
+    nx.draw_networkx_nodes(G2, pos, nodelist=[ego], **options)
     nx.draw_networkx_edges(G2, pos, width=2, **options_edges)
     plt.show()
 
-    #save_2_output_file()
+    save_2_output_file()
 
     #prepare colors - send dict of labels get dict of colors
     # colors = prepare_colors(graph_data_list)
