@@ -26,9 +26,9 @@ filename_postfix = "_OUT_ENC.csv"
 # before
 # video_id = "BEFORE_04_18_2024"
 # after
-# video_id = "AFTER_04_18_2024"
+video_id = "AFTER_04_18_2024"
 # tech
-video_id = "TECH_04_18_2024"
+# video_id = "TECH_04_18_2024"
 
 
 #video_id = "TEST_2024"
@@ -43,6 +43,7 @@ class GraphData:
 
 def get_emotion_for_name(emotions_list,name):
     for e in emotions_list:
+        print ("author " + str(e.author) + " name " + name)
         if e.author == name:
             return e.label
     return "neutral"
@@ -65,13 +66,18 @@ def prepare_colors(g2, emotions_list):
                           for k, v in dict_langfam2color.items()
                           }
     counts = str(len(emotions_list))
-    for c in emotions_list:
-        graph_colors.append(dict_langfam2color[c.label])
+    for c in list(g2.edges()):
+        edge_emotion = get_emotion_for_name(emotions_list, c[1])
+        graph_colors.append(dict_langfam2color[edge_emotion])
     for c in list(g2.nodes()):
         emotion = get_emotion_for_name(emotions_list, c)
         nodes_colors.append(dict_langfam2color[emotion])
+        # get the color for the edge
+        # get_color_for_emotion(c,emotions_list)
     #graph_colors = [dict_langfam2color[fam] for fam in counts.keys()]
-
+    #for i in range(len(nodes_colors)):
+    #    if nodes_colors[i] != graph_colors[i]:
+    #        print("Here")
     # nodes_colors = [G2.nodes[node][ATTRIBUTE_NAME] for node in list(G2.nodes())]
     return graph_colors, nodes_colors
 
@@ -161,8 +167,6 @@ def main_vis():
     #
     # axe.set_title('Title for NetworkX', loc='center')
     # axe.legend()
-
-
 
     nx.draw(G2, pos, node_color=node_colors,
             node_size=800, font_size=10, with_labels=True)
