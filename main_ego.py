@@ -23,7 +23,13 @@ filename_prefix = "FILENAME_EMOTIONS_"
 filename_postfix = "_OUT_ENC.csv"
 #video_id = "SMALL_03_10_2024"
 #video_id = "kEZjV5IwUA0"
-video_id = "SORTED"
+# before
+# video_id = "BEFORE_04_18_2024"
+# after
+# video_id = "AFTER_04_18_2024"
+# tech
+video_id = "TECH_04_18_2024"
+
 
 #video_id = "TEST_2024"
 # create a class for the data
@@ -188,7 +194,7 @@ def main_vis():
     ax.legend(handles=legend_elements, loc='upper right')
     plt.show()
 
-    #save_2_output_file()
+    save_2_output_file()
 
     #prepare colors - send dict of labels get dict of colors
     # colors = prepare_colors(graph_data_list)
