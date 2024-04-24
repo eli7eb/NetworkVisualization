@@ -1,13 +1,23 @@
-# This is a sample Python script.
+# show the ego graph with tkinter library
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+# read csv file
+# create canvas
+# divide to 7 parts (360 degrees)
+# calculate distance between the edges : number of edges
+# calculate width of edge based on score
+# get commenters images from youtube
+# improve the color palate of the emotions
+# calculate the center
+# draw the network
+# draw the legend + text
+
 import csv
 import networkx as nx
 import matplotlib.pyplot as plt
 import os
 import re
 
+from tkinter import Tk, Canvas, Frame, BOTH
 from ast import literal_eval
 from datetime import datetime
 from matplotlib.lines import Line2D
@@ -29,10 +39,26 @@ video_id = "BEFORE_04_18_2024"
 #video_id = "AFTER_04_18_2024"
 # tech
 #video_id = "TECH_04_18_2024"
-
-
 #video_id = "TEST_2024"
 # create a class for the data
+
+class Example(Frame):
+
+    def __init__(self):
+        super().__init__()
+
+        self.initUI()
+
+    def initUI(self):
+        self.master.title("Lines")
+        self.pack(fill=BOTH, expand=1)
+
+        canvas = Canvas(self)
+        canvas.create_line(15, 25, 200, 25)
+        canvas.create_line(300, 35, 300, 200, dash=(4, 2))
+        canvas.create_line(55, 85, 155, 85, 105, 180, 55, 85)
+
+        canvas.pack(fill=BOTH, expand=1)
 
 class GraphData:
   def __init__(self,author, pred, score, label):
@@ -232,12 +258,15 @@ def main_vis():
     # #    G2.add_edge(video_id, str(x.author))
 
 
-def start_ego_graph(name):
-    # Use a breakpoint in the code line below to debug your script.
-    main_vis()
+def main():
+
+    root = Tk()
+    ex = Example()
+    root.geometry("400x250+300+300")
+    root.mainloop()
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    start_ego_graph('PyCharm')
+    main()
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
